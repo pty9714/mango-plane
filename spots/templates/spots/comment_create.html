@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+
+{% block style %}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.contentBox {
+  display: flex;
+  flex-direction: column;
+  width: 680px;
+  margin: 0 auto;
+  margin-top: 30px;
+}
+
+.emoticonBox {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #DBDBDB;
+  padding: 10px;
+}
+
+.emoticon {
+  display: flex;
+  flex-direction: row;
+}
+
+.reviewBox {
+  overflow: hidden;
+  overflow-wrap: break-word;
+  height: 240px;
+}
+
+.EmoticonPicker__Label {
+  color: #888888;
+}
+.EmoticonPicker__Icon {
+  font-size: 36px;
+  margin: 8px;
+  color: #888888;
+}
+.form-check-input {
+  display: none;
+}
+
+.buttonBox {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 30px;
+}
+
+.resetButton {
+  min-width: 140px;
+  min-height: 50px;
+  margin-right: 16px;
+  padding-left: 14px;
+  padding-right: 14px;
+  border: 1px solid #7F7F7F;
+  border-radius: 50px;
+  font-size: 16px;
+  color: #7F7F7F;
+  text-align: center;
+  background-color: #FFFFFF;
+}
+
+.submitButton {
+  min-width: 140px;
+  min-height: 50px;
+  padding-left: 14px;
+  padding-right: 14px;
+  border: 1px solid #E9E9E9;
+  border-radius: 50px;
+  font-size: 16px;
+  color: #FFFFFF;
+  text-align: center;
+  background-color: #E9E9E9;
+}
+.submitButton.active {
+  min-width: 140px;
+  min-height: 50px;
+  padding-left: 14px;
+  padding-right: 14px;
+  border: 1px solid #E9E9E9;
+  border-radius: 50px;
+  font-size: 16px;
+  color: #FFFFFF;
+  text-align: center;
+  background-color: #ff7100;
+}
+
+{% comment %} 제출하기 버튼 활성화 오렌지 색 #ff7100; {% endcomment %}
+
+.titleBox {
+  display: flex;
+  align-items: baseline;
+}
+
+.spotTitle {
+  white-space: nowrap;
+  display: inline-block;
+  margin-right: 5px;
+  font-size: 28px;
+  color: #FF792A;
+}
+
+.spotSubtitle {
+  display: inline-block;
+  font-size: 16px;
+  color: #7F7F7F;
+}
+
+.emojiFlex {
+  list-style: none;
+  display: flex;
+  padding: 0;
+}
+
+{% endblock style %}
+
+{% block content %}
+<!-- 이모티콘 link -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+
+<section class='contentBox'>
+  <!-- 제목 -->
+  <div class="titleBox">
+    <p class="spotTitle">{{ spot.title }}</p><p class="spotSubtitle">에 대한 솔직한 리뷰를 작성해주세요.</p>
+  </div>
+
+  <!-- 댓글 작성 폼 -->
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+  
+    <!-- 이미지 업로드 폼셋 -->
+    {{ formset.management_form }}
+    {% for image_form in formset %}
+      <div class="image-form">
+        {{ image_form.image.label_tag }}
+        {% if forloop.first %} <!-- 첫 번째 폼에만 multiple 속성 추가 -->
+          <input type="file" name="{{ image_form.prefix }}-image" multiple>
+        {% endif %}
+      </div>
+    {% endfor %}
+  
+    <div class="buttonBox">
+      <button type="reset" class="resetButton">취소하기</button>
+      <button type="submit" class="submitButton">작성하기</button>
+    </div>
+  </form>
+  
+</section>
+
+  <!-- 댓글 작성 JS -->
+  <script>
+    const submitButton = document.querySelector('.submitButton');
+    const contentField = document.querySelector('#id_content');
+
+    contentField.addEventListener('input', () => {
+      if (contentField.value.length > 0) {
+        submitButton.classList.add('active');
+        submitButton.disabled = false;
+      } else {
+        submitButton.classList.remove('active');
+        submitButton.disabled = true;
+      }
+    });
+  </script>
+
+
+{% endblock %}

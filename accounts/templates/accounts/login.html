@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block style %}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.container {
+  margin-top: 5%;
+  text-align: center;
+}
+
+.login {
+  margin-top: 50px;
+}
+
+.loginButton {
+  width: 400px;
+  background-color: lightgray;
+  border: 1px solid lightgray;
+  border-radius: 15px;
+  margin-top: 30px;
+  padding: 10px;
+}
+
+label {
+  display: inline-block;
+  width: 100px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+input[type="text"], input[type="password"], input[type="email"] {
+  width: 250px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  margin-bottom: 10px;
+}
+
+input[type="submit"]:hover {
+  background-color: orange;
+}
+
+{% endblock style %}
+
+{% block content %}
+  <div class="container">
+    <h1>망고 플레인</h1>
+    <p>로그인하면 가고 싶은 식당을 저장할 수 있어요!</p>
+    <form class="login" action="{% url 'accounts:login' %}" method="POST">
+      {% csrf_token %}
+      <label for="{{ form.username.id_for_label }}">아이디</label>
+      {{ form.username }}
+      <br>
+      <label for="{{ form.password.id_for_label }}">비밀번호</label>
+      {{ form.password }}
+      <br>
+      <input class="loginButton" type="submit" value="로그인">
+    </form>
+  </div>
+{% endblock content %}

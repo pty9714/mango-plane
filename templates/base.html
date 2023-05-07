@@ -1,0 +1,421 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+
+  <style>
+    a {
+      text-decoration: none; /* 밑줄 제거 */
+      color: inherit;
+    }
+    
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+    .tab-content {
+      display: none;
+    }
+    .nav {
+      position : fixed;
+      top: 0;
+      left: 0;
+      width:100%;
+      background-color: white;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      z-index: 999;
+
+    }
+    .nav-link{
+      color: black;
+    }
+
+
+    .modal-backdrop  {
+      z-index: 999;
+    }
+
+    .modal-content {
+      z-index: 1051;
+      height: 550px;
+      width: 320px;
+      border-radius: 0;
+    }
+
+    .modal-header{
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-dialog_base {
+      position: fixed;
+      top: 8%;
+      right: 0;
+      margin-left: auto;
+      z-index: 1051;
+    }
+
+    .modal-header button {
+      margin: 0;
+      padding: 0;
+      border: none;
+      background-color: white;
+    }
+    
+    .modal-header button:focus {
+      color: orange;
+      border-bottom: 2px solid orange;
+    }
+    .modal-body {
+      padding: 5px;
+      
+    }
+    #clearbutton {
+      border: none;
+      background-color: transparent;
+      color: #dbdbdb;
+      margin-left: auto;
+      font-size: 10px;
+      line-height: 19px;
+    }
+    .like-spot-icon {
+      color: #959595;
+    }
+    
+    .like-spot:hover .like-spot-icon,
+    .like-spot-icon.active {
+      color: #ff9008;
+    }
+    
+    .like-spot-text {
+      color: #959595;
+    }
+    
+    .like-spot:hover .like-spot-text,
+    .like-spot-text.active {
+      color: #ff9008;
+    }
+    .custom-button {
+      height: 38px;
+    }
+    #modallikebutton {
+      margin-right: 10px;
+      margin-bottom: 35px;
+    }
+
+    #modalstar{
+      font-size: 20px;
+    }
+
+    .search {
+      background-color: white;
+      border-radius: 50px;
+      border-color: orange;
+      border-style: solid;
+      width: 40%;
+      height: 50px;
+      justify-content: center; 
+  
+    }
+  
+    .search-label {
+        color: gray;
+    }
+  
+    .search-input__text {
+        border-style: none;
+        outline: none;
+        height: 100%;
+        border-radius: 50px;
+    }
+  
+    .search-input__text::placeholder {
+      color: lightgray;
+      font-size: 20px;
+    }
+  
+    .search-input__submit {
+      border-radius: 50px;
+      border-style: none;
+      background-color: orange;
+      color: white;
+      width: 100px;
+      height: 100%;
+      margin-left: auto;
+    }
+  
+    .search-label__icon {
+      font-size: 24px;
+    }
+
+    .like-spot-icon {
+      color: #959595;
+    }
+    
+    .like-spot:hover .like-spot-icon,
+    .like-spot-icon.active {
+      color: #ff9008;
+    }
+    
+    .like-spot-text {
+      color: #959595;
+    }
+    
+    .like-spot:hover .like-spot-text,
+    .like-spot-text.active {
+      color: #ff9008;
+    }
+    .custom-button {
+      height: 38px;
+    }
+    
+    #modalstar{
+      font-size: 20px;
+    }
+
+    .scrollable-div {
+      overflow: auto;
+    }
+
+  {%block style%}
+  {%endblock style%}
+  </style>
+</head>
+<body>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style = "z-index:2000" >
+    <div class="modal-dialog modal-dialog_base">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button style = "width : 50%; height : 50px; color : #9b9b9b;" onclick="openTab(event, 'tab1')" id = "defaultOpen">최근 본 여행지</button>
+          <button style = "width : 50%; height : 50px; color : #9b9b9b; " onclick="openTab(event, 'tab2')">가고싶다</button>
+        </div>
+        <div class="modal-body scrollable-div">
+          <!-- 탭 컨텐츠 -->
+          <div id="tab1" class="tab-content" style="display: block">
+            {% if recently_viewed_spots %}
+            <div class="d-flex justify-content-end">
+              <button onclick="deleteRecentlyViewedSpots()" id="clearbutton">x clear all</button>
+            </div>
+
+                {% for spot in recently_viewed_spots %}
+                
+                  <div class="d-flex align-items-center justify-content-between mb-4">
+                    <a href="{% url 'spots:detail' spot.pk %}">
+                      <div class="d-flex align-items-center">
+                        <img src="{% if spot.image %}{{ spot.image.url }} {% else %} {% static 'No-Image-Placeholder.svg.png' %}{% endif %}" style="width: 70px; height: 70px; margin-right: 10px " alt="{{ spot.title }}">
+                        <p class="ml-5">{{ spot.title }}</p>
+                      </div>
+                    </a>
+
+                    <form class="like-form" method="POST" action="{% url 'spots:likes' spot.pk %}">
+                      {% csrf_token %}
+                        <button type="submit" class="btn btn-link p-0 Icon custom-button" id="modallikebutton">
+                          <i class="fas fa-star like-spot-icon {% if request.user in spot.like_users.all %}active{% endif %}" id = "modalstar"></i>
+                        </button>
+                    </form>
+                  </div>
+              {% endfor %}
+            {% else %}
+            <div class = "d-flex flex-column justify-content-center align-items-center">
+              <div style = "height : 140px;"></div>
+              <p class = "text-center" style = "font-size: 22px;">거기가 어디였지?</p>
+              <p class="text-center" style="color: #ff792a; font-size: 14px;">내가 둘러 본 식당이 이 곳에 순서대로 <br>기록됩니다.</p>
+            </div>
+            {% endif %}
+          </div>
+          <div id="tab2" class="tab-content">
+            {% if liked_spots %}
+                {% for spot in liked_spots %}
+                <a href="{% url 'spots:detail' spot.pk %}">
+                  <div class="d-flex align-items-center mb-4">
+                    <img src="{% if spot.image %}{{ spot.image.url }} {% else %} {% static 'No-Image-Placeholder.svg.png' %}{% endif %}" style="width: 70px; height: 70px; margin-right: 10px " alt="{{ spot.title }}">
+                    <p class="ml-5">{{ spot.title }}</p>
+                  </div>
+                </a>
+                {% endfor %}
+            {% else %}
+            <div class = "d-flex flex-column justify-content-center align-items-center">
+              <div style = "height : 140px;"></div>
+              <p class = "text-center"  style = "font-size: 23px;">격하게 가고싶다..</p>
+              <p class="text-center" style="color: #ff792a; font-size: 17px;">식당의 '별' 아이콘을 누르면 가고싶은 곳을 쉽게 저장할 수 있습니다.</p>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        <div class="modal-footer" style = "padding : 0;">
+          <button class="btn" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">내정보</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1" style = "z-index:2000 top: 100px; left: 0%;">
+    <div class="modal-dialog modal-dialog_base">
+      <div class="modal-content">
+        <div class="modal-header text-center">
+          <p class="modal-title fs-5 " style = "height : 50px;" id="exampleModalToggleLabel2">내정보</p>
+        </div>
+        <div class="modal-body">
+          <div class = "container text-center">
+            <div style = "display: inline-block;">
+            <div class="card" class = "mx-auto" style = "width : 200px;">
+              {% if request.user.image %}
+                <img src="{{ request.user.image.url }}" class="card-img-top rounded-circle mx-auto mt-4" style = "width: 70px;" alt="image">
+              {% else %}
+                <img src="{% static 'not-found-user.png' %}" class="card-img-top rounded-circle mx-auto mt-4" alt="image">
+              {% endif %}
+              <div class="card-body mal">
+                {% comment %} <h4 class="card-text card_title">{{ request.user }}</h4> {% endcomment %}
+                <p class="card-text">{{spot.title}}</p>
+                <p class="card-text">이름: {{ request.user.last_name }}{{ request.user.first_name }}</p> 
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer d-flex justify-content-evenly" >
+          <form action="{% url 'accounts:delete' %}" method="POST">
+            {% csrf_token %}
+            <input type="submit" class="btn" value="회원탈퇴">
+          </form>
+          <a class="btn" href="{% url 'accounts:logout' %}" role="button">로그아웃</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+  <nav class="navbar navbar-expand nav">
+    <div class="d-flex container-fluid" >
+      <a class="me-5 navbar-brand" href="{% url 'spots:index' %}">
+        <img src="{% static 'logo4.png' %}" alt="logo" width="100">
+      </a>
+        <form action="{% url 'spots:search' %}" class="search" style="display: flex; align-items: center;">
+          <i class="fas fa-search search-label__icon ms-5" style="color: #d4d4d4;"></i>
+        </label>
+          <input class="search-input__text ms-3" placeholder="여행지" name="keyword" id="keyword" style = 'width: 70%' >
+          <input class="search-input__submit" type="submit" value="검색" style="width: 100px;">
+        </form>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="ms-3" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link me-3" href="{% url 'spots:index' %}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link me-3" href="{% url 'spots:create' %}">작성하기</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link me-3" href="{% url 'accounts:profile' user %}">Profile</a>
+          </li>
+          <li class="nav-item">
+            {% if request.user.is_authenticated %}
+            {% comment %} <p class="fs-6 mb-0 mx-2" style="vertical-align: middle">{{ user }}님 안녕하세요. </p> {% endcomment %}
+              <!-- Button trigger modal -->
+              <button type="button" style="width: 50px; height: 50px; padding: 0;" class="btn btn-lg rounded-circle me-2 border-warning border border-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                {% if user.image %}
+                <img class="rounded-circle" style="width: 100%; height: 100%; object-fit: cover; display: block; margin: auto;" src="{{ user.image.url }}" alt="Profile Image">
+                {% else %}
+                <img class="rounded-circle" style="width: 100%; height: 100%; object-fit: cover; display: block; margin: auto;" src="{% static 'not-found-user.png' %}" alt="Profile Image">
+                {% endif %}
+              </button>
+            {% else %}
+              <a class="btn btn-outline-dark-subtle mx-2" href="{% url 'accounts:login' %}" role="button">로그인</a>
+              <a class="btn btn-outline-dark" href="{% url 'accounts:signup' %}" role="button">회원가입</a>
+            {% endif %}
+          </li>
+        </ul>
+      </div>
+
+        
+  </nav>
+
+  <div style = 'height : 72.77px'></div>
+  {%block content%}
+  {%endblock content%}
+  {% block script %}
+  {% endblock script %}
+  <script>
+		// 탭을 열기 위한 함수
+    function openTab(evt, tabName) {
+      var i, tabcontent, tablinks;
+      tabcontent = document.getElementsByClassName("tab-content");
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+      }
+      tablinks = document.getElementsByTagName("button");
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].classList.remove("active"); 
+        tablinks[i].style.color = ""; 
+        tablinks[i].style.borderBottom = ""; 
+      }
+      document.getElementById(tabName).style.display = "block";
+      evt.currentTarget.classList.add("active"); 
+      evt.currentTarget.style.color = "#ff792a";
+      evt.currentTarget.style.borderBottom = "2px solid #ff792a"; 
+    };
+
+    document.getElementById("defaultOpen").click();
+
+
+    function loadRecentlyViewedSpots() {
+      fetch('/recently_viewed_spots/')
+        .then(response => response.text())
+        .then(data => {
+          const recentlyViewedSpots = document.querySelector('#recently-viewed-spots');
+          recentlyViewedSpots.innerHTML = data;
+        })
+        .catch(error => console.error(error));
+    };
+
+    function deleteRecentlyViewedSpots() {
+      const csrftoken = getCookie('csrftoken');
+      fetch('/spots/delete_recently_viewed_spots/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrftoken
+        },
+        body: JSON.stringify({})
+      })
+        .then(response => {
+          const recentlyViewedSpots = document.querySelector('#recently-viewed-spots');
+          recentlyViewedSpots.innerHTML = '';
+        })
+        .catch(error => console.error(error));
+    }
+    
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+
+    
+	</script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+</body>
+</html>

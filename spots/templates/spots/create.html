@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% block style %}
+
+  body {
+    background-color: #F5F5F5;
+  }
+
+  h3 {
+    color: #FF6F00;
+    font-weight: bold;
+    font-size: 2.5rem;
+  }
+
+  .wid {
+    width: 800px;
+    margin: 0 auto;
+    background-color: #FFFFFF;
+    border: 1px solid #E5E5E5;
+    border-radius: 10px;
+    padding: 30px 50px;
+  }
+
+  .mt-5 {
+    margin-top: 3rem !important;
+  }
+
+  .mb-4 {
+    margin-bottom: 2rem !important;
+  }
+
+  hr {
+    border: none;
+    height: 1px;
+    background-color: #E5E5E5;
+    margin: 1rem 0;
+  }
+
+  .create_btn {
+    color: #FFFFFF;
+    background-color: #c6c6c6;
+    border-color: #c6c6c6;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  .create_btn:hover {
+    color: #FFFFFF;
+    background-color: #FF6F00;
+    border-color: #FF6F00;
+  }
+
+  p {
+    display: grid;
+    grid-template-columns: 1fr auto;
+  }
+
+  p span {
+    grid-column: 1 / -1;
+  }
+
+{% endblock style %}
+
+{% block content %}
+<div class="wid">
+  <form action="{% url 'spots:create' %}" method="POST" enctype="multipart/form-data" style="width: 500px" class="mx-auto m-5 mb-3">
+    <h3>작성하기</h3>
+    <div class='mt-5 mb-4'>
+      {% csrf_token %}
+      {% for field in form %}
+      <div class='d-flex align-items-center'>
+        <div class='col-3'>{{ field.label }}</div>
+        <div class='col-9'>{{ field }}</div>
+      </div>
+      <hr>
+      {% endfor %}
+
+      <div id="map" style="width:300px;height:300px;margin-top:10px;display:none"></div>
+      <button class="btn btn-outline-secondary d-block w-100 mt-4" type="submit">글 작성</button>
+    </div>
+  </form>
+</div>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b31017d4e781b285ff64fd6b844340e9&libraries=services"></script>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+  
+  var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+        mapOption = {
+            center: new daum.maps.LatLng(37.537187, 127.005476), // 지도의 중심좌표
+            level: 5 // 지도의 확대 레벨
+        };
+
+    //지도를 미리 생성
+    var map = new daum.maps.Map(mapContainer, mapOption);
+    //주소-좌표 변환 객체를 생성
+    var geocoder = new daum.maps.services.Geocoder();
+    //마커를 미리 생성
+    var marker = new daum.maps.Marker({
+        position: new daum.maps.LatLng(37.537187, 127.005476),
+        map: map
+    });
+  
+  function search() {
+    //카카오 지도 발생
+    new daum.Postcode({
+      oncomplete: function(data) {
+          var addr = data.address; // 최종 주소 변수
+
+          // 주소 정보를 해당 필드에 넣는다.
+          document.getElementById("address_kakao").value = addr;
+          // 주소로 상세 정보를 검색
+          geocoder.addressSearch(data.address, function(results, status) {
+              // 정상적으로 검색이 완료됐으면
+              if (status === daum.maps.services.Status.OK) {
+
+                  var result = results[0]; //첫번째 결과의 값을 활용
+
+                  // 해당 주소에 대한 좌표를 받아서
+                  var coords = new daum.maps.LatLng(result.y, result.x);
+                  // 지도를 보여준다.
+                  mapContainer.style.display = "block";
+                  map.relayout();
+                  // 지도 중심을 변경한다.
+                  map.setCenter(coords);
+                  // 마커를 결과값으로 받은 위치로 옮긴다.
+                  marker.setPosition(coords)
+              }
+          });
+      }
+    }).open();
+  }  
+    
+  window.onload = function(){
+    document.getElementById("address_kakao").addEventListener("keydown", search)
+    document.getElementById("address_kakao").addEventListener("click", search)
+  }
+  
+
+</script>
+{% endblock content %}
