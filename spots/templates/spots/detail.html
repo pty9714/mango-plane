@@ -288,8 +288,8 @@ none-margin-bottom{
       const marker = new kakao.maps.Marker({
           position: markerPosition
       });
-      marker.setMap(map);
-      map.setCenter(coords);
+      {% comment %} marker.setMap(map); {% endcomment %}
+      map.setCenter(markerPosition);
 
         var content = '<div class="wrap">' + 
           '    <div class="info">' + 
@@ -316,7 +316,13 @@ none-margin-bottom{
           map: map,
           position: marker.getPosition()       
         });
-    
+
+    function writeReview(link) {
+      link.querySelector('.review-write-text').style.color = 'orange';
+      link.querySelector('.review-write-icon').style.color = 'orange';
+      window.location.href = link.href;
+    }
+
     $(document).ready(function() {
       // When the like-form is submitted
       $('.like-form').submit(function(event) {
