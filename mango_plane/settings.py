@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-xpo@1@6q$f_7i$w8+o@gma5xo2h3zsx6=^i=m3l7yxf+(*(3$l
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['port-0-mango-plane-5x7y2mlhd02r7n.sel4.cloudtype.app', 'port-0-mango-plane-5x7y2mlhd1m4s6.sel4.cloudtype.app']
+ALLOWED_HOSTS = ['port-0-mango-plane-f69b2mlhd1pidw.sel4.cloudtype.app']
 
 
 # Application definition
